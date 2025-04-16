@@ -1,5 +1,3 @@
-import { TwitterApi } from 'twitter-api-v2';
-
 export class TwitterHandler {
   constructor(credentials) {
     this.client = new TwitterApi(credentials);
