@@ -10,7 +10,9 @@
   ],
   "host_permissions": [
     "https://api.twitter.com/*",
-    "https://*.supabase.co/*"
+    "https://*.supabase.co/*",
+    "https://fonts.googleapis.com/*",
+    "https://fonts.gstatic.com/*"
   ],
   "background": {
     "service_worker": "background/background.js",
