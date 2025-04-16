@@ -66,4 +66,12 @@ button:disabled {
   color: #666;
   font-size: 14px;
   min-height: 20px;
+}
+
+.keyboard-shortcuts {
+  font-size: 12px;
+  color: #666;
+  text-align: left;
+  margin-top: -8px;
+  margin-bottom: 4px;
 } 
