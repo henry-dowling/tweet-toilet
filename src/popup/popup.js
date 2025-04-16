@@ -1,6 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-import { TwitterApi } from 'twitter-api-v2';
-
 // Initialize Supabase client
 const supabaseUrl = 'YOUR_SUPABASE_URL';
 const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
