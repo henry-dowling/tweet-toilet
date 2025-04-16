@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const tweetInput = document.getElementById('tweetInput');
   const statusDiv = document.getElementById('status');
 
+  tweetInput.focus()
+
   // Check if user is already logged in
   chrome.storage.local.get(['twitterAuth'], (result) => {
     if (result.twitterAuth) {
