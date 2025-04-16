@@ -15,6 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Handle Enter and Shift+Enter key presses
+  tweetInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      if (e.shiftKey) {
+        // Allow default behavior (newline) when Shift+Enter is pressed
+        return;
+      }
+      // Prevent default behavior and submit tweet when Enter is pressed
+      e.preventDefault();
+      sendTweetBtn.click();
+    }
+  });
+
   loginBtn.addEventListener('click', async () => {
     try {
       // Implement Twitter OAuth flow here
