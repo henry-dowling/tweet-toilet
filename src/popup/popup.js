@@ -1,16 +1,3 @@
-// Initialize Supabase client
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Initialize Twitter client
-const twitterClient = new TwitterApi({
-  appKey: 'YOUR_TWITTER_API_KEY',
-  appSecret: 'YOUR_TWITTER_API_SECRET',
-  accessToken: 'YOUR_TWITTER_ACCESS_TOKEN',
-  accessSecret: 'YOUR_TWITTER_ACCESS_SECRET',
-});
-
 document.addEventListener('DOMContentLoaded', () => {
   const loginBtn = document.getElementById('loginBtn');
   const sendTweetBtn = document.getElementById('sendTweetBtn');
