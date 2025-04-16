@@ -18,5 +18,14 @@
   },
   "action": {
     "default_popup": "popup/popup.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Ctrl+Shift+S"
+      },
+      "description": "Open Tweet Toilet"
+    }
   }
 } 
