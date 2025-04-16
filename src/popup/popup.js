@@ -30,20 +30,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loginBtn.addEventListener('click', async () => {
     try {
-      // Implement Twitter OAuth flow here
       statusDiv.textContent = 'Logging in...';
-      // After successful login, store auth token
-      chrome.storage.local.set({ twitterAuth: true }, () => {
-        loginBtn.style.display = 'none';
-        tweetInput.disabled = false;
-        sendTweetBtn.disabled = false;
-        statusDiv.textContent = 'Logged in successfully!';
-      });
-    } catch (error) {
-      statusDiv.textContent = 'Login failed. Please try again.';
-      console.error('Login error:', error);
-    }
-  });
+
+      window.open(
+        "http://localhost:3000/auth/start",
+        "_blank",
+        "width=600,height=700"
+      );
+
+      const delays = [1000, 2000, 5000]; // 1s, 2s, 5s
+
+      for (let delay of delays) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+        const res = await fetch("http://localhost:3000/get-user", {
+          method: "GET",
+          credentials: "include", // include cookies
+        });
+
+        if (res.ok) {
+          const user = await res.json();
+          statusDiv.textContent = `Logged in as @${user.username} (ID: ${user.id})`;
+          return;
+        }
+      }
+
+      statusDiv.textContent = 'Login timeout. Please try again.';
+
+      } catch (error) {
+        statusDiv.textContent = 'Login failed. Please try again.';
+        console.error('Login error:', error);
+      }
+    });
 
   sendTweetBtn.addEventListener('click', async () => {
     const tweetText = tweetInput.value.trim();
@@ -54,22 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       statusDiv.textContent = 'Sending tweet...';
-      // Send tweet using Twitter API
-      const tweet = await twitterClient.v2.tweet(tweetText);
-      
-      // Store tweet in Supabase
-      const { data, error } = await supabase
-        .from('tweets')
-        .insert([
-          { 
-            tweet_id: tweet.data.id,
-            text: tweetText,
-            created_at: new Date().toISOString()
-          }
-        ]);
 
-      if (error) throw error;
+      const response = await fetch("http://localhost:3000/tweet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: tweetText }),
+        credentials: "include",
+      });
 
+      if (!response.ok) throw new Error(await response.text());
+
+      const result = await response.text(); // or use .json() if you return JSON
+      console.log("Tweet result:", result);
       statusDiv.textContent = 'Tweet sent successfully!';
       tweetInput.value = '';
     } catch (error) {
@@ -77,4 +92,4 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Tweet error:', error);
     }
   });
-}); 
+});
