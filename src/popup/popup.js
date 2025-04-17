@@ -63,8 +63,31 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // TODO: Implement tweet sending functionality
-    console.log('Tweet to send:', tweetText);
-    statusDiv.textContent = 'Tweet sending not yet implemented';
+    try {
+      statusDiv.textContent = 'Sending tweet...';
+      sendTweetBtn.disabled = true;
+
+      const response = await fetch('http://localhost:3000/tweet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: tweetText }),
+        credentials: 'include', // Important: This ensures cookies are sent with the request
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      statusDiv.textContent = 'Tweet sent successfully!';
+      tweetInput.value = ''; // Clear the input
+    } catch (error) {
+      console.error('Failed to send tweet:', error);
+      statusDiv.textContent = 'Failed to send tweet. Please try again.';
+    } finally {
+      sendTweetBtn.disabled = false;
+    }
   });
 }); 
