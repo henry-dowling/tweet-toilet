@@ -11,8 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const tweetInput = document.getElementById('tweetInput');
   const statusDiv = document.getElementById('status');
   const testAnimationBtn = document.getElementById('testAnimationBtn');
+  const authSection = document.querySelector('.auth-section');
+  const userInfo = document.querySelector('.user-info');
+  const tweetSection = document.querySelector('.tweet-section');
 
   tweetInput.focus();
+
+  // Simulate logged in state
+  authSection.style.display = 'none';
+  userInfo.style.display = 'block';
+  tweetSection.style.display = 'block';
 
   function playFlushAnimation() {
     // Create water swirl effect
