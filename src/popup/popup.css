@@ -167,6 +167,21 @@ button:disabled {
   font-size: 14px;
 }
 
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+#profilePicture {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e2e8f0;
+}
+
 #username {
   color: #1DA1F2;
   font-weight: 500;
