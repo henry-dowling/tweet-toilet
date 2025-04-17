@@ -63,29 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    try {
-      statusDiv.textContent = 'Sending tweet...';
-      // Send tweet using Twitter API
-      const tweet = await twitterClient.v2.tweet(tweetText);
-      
-      // Store tweet in Supabase
-      const { data, error } = await supabase
-        .from('tweets')
-        .insert([
-          { 
-            tweet_id: tweet.data.id,
-            text: tweetText,
-            created_at: new Date().toISOString()
-          }
-        ]);
-
-      if (error) throw error;
-
-      statusDiv.textContent = 'Tweet sent successfully!';
-      tweetInput.value = '';
-    } catch (error) {
-      statusDiv.textContent = 'Failed to send tweet. Please try again.';
-      console.error('Tweet error:', error);
-    }
+    // TODO: Implement tweet sending functionality
+    console.log('Tweet to send:', tweetText);
+    statusDiv.textContent = 'Tweet sending not yet implemented';
   });
 }); 

@@ -1,14 +1,12 @@
 {
   "name": "tweet-toilet",
   "version": "1.0.0",
-  "description": "A Chrome extension for managing tweets with Supabase",
+  "description": "A Chrome extension for managing tweets",
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch"
   },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.39.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",

@@ -1,6 +1,6 @@
 # Tweet Toilet Chrome Extension
 
-A Chrome extension that allows users to send tweets and store them in Supabase.
+A Chrome extension that allows users to send tweets in bulk.
 
 ## Setup
 

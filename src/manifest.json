@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tweet Toilet",
   "version": "1.0.0",
-  "description": "A Chrome extension for managing tweets with Supabase",
+  "description": "A Chrome extension for managing tweets",
   "permissions": [
     "storage",
     "activeTab",
@@ -10,7 +10,7 @@
   ],
   "host_permissions": [
     "https://api.twitter.com/*",
-    "https://*.supabase.co/*",
+    "http://localhost:3000/*",
     "https://fonts.googleapis.com/*",
     "https://fonts.gstatic.com/*"
   ],
