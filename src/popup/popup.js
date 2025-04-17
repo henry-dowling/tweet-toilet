@@ -3,8 +3,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendTweetBtn = document.getElementById('sendTweetBtn');
   const tweetInput = document.getElementById('tweetInput');
   const statusDiv = document.getElementById('status');
+  const testAnimationBtn = document.getElementById('testAnimationBtn');
 
-  tweetInput.focus()
+  tweetInput.focus();
+
+  function playFlushAnimation() {
+    // Create water swirl effect
+    const waterEffect = document.createElement('div');
+    waterEffect.className = 'water-effect';
+    document.body.appendChild(waterEffect);
+
+    // Add flush animation to tweet input
+    tweetInput.classList.add('flush-animation');
+
+    // Clean up after animation
+    setTimeout(() => {
+      waterEffect.remove();
+      tweetInput.classList.remove('flush-animation');
+    }, 1000);
+  }
 
   // Check if user is already logged in
   chrome.storage.local.get(['twitterAuth'], (result) => {
@@ -56,6 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  testAnimationBtn.addEventListener('click', () => {
+    const dummyText = tweetInput.value.trim();
+    if (!dummyText) {
+      statusDiv.textContent = 'Please enter some text to test the animation!';
+      return;
+    }
+    playFlushAnimation();
+    setTimeout(() => {
+      tweetInput.value = '';
+      statusDiv.textContent = 'Test flush complete! 🚽';
+    }, 1000);
+  });
+
   sendTweetBtn.addEventListener('click', async () => {
     const tweetText = tweetInput.value.trim();
     if (!tweetText) {
@@ -80,9 +110,13 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      playFlushAnimation();
       const result = await response.json();
-      statusDiv.textContent = 'Tweet sent successfully!';
-      tweetInput.value = ''; // Clear the input
+      
+      setTimeout(() => {
+        statusDiv.textContent = 'Tweet sent successfully! 🚽';
+        tweetInput.value = ''; // Clear the input
+      }, 1000);
     } catch (error) {
       console.error('Failed to send tweet:', error);
       statusDiv.textContent = 'Failed to send tweet. Please try again.';
