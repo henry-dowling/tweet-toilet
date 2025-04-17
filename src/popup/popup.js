@@ -1,5 +1,12 @@
+const BACKEND_URL = 'http://localhost:3000';
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('popup.js loaded');
+
   const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
   const sendTweetBtn = document.getElementById('sendTweetBtn');
   const tweetInput = document.getElementById('tweetInput');
   const statusDiv = document.getElementById('status');
@@ -23,12 +30,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
-  // Check if user is already logged in
-  chrome.storage.local.get(['twitterAuth'], (result) => {
-    if (result.twitterAuth) {
-      loginBtn.style.display = 'none';
-      tweetInput.disabled = false;
-      sendTweetBtn.disabled = false;
+  function disableLogInButton(name) {
+    loginBtn.style.display = 'none';
+    tweetInput.disabled = false;
+    sendTweetBtn.disabled = false;
+    logoutBtn.style.display = 'inline-block';
+    statusDiv.textContent = `Logged in as @${name}`;
+  }
+
+  function enableLogInButton() {
+    loginBtn.style.display = 'inline-block';
+    logoutBtn.style.display = 'none';
+    tweetInput.disabled = true;
+    sendTweetBtn.disabled = true;
+  }
+
+  chrome.storage.local.get(['twitterAuth', 'userName'], async (r) => {
+    if (r.twitterAuth && r.userName) return disableLogInButton(r.userName);
+
+    try {
+      const resp = await fetch(`${BACKEND_URL}/is-user-logged-in`, {
+        credentials: 'include',
+      });
+      if (!resp.ok) throw new Error('not logged');
+
+      const { userName } = await resp.json();
+      chrome.storage.local.set({ twitterAuth: true, userName }, () => {
+        disableLogInButton(userName);
+      });
+    } catch {
+      statusDiv.textContent = 'Not logged in';
+      loginBtn.style.display = 'inline-block';
     }
   });
 
@@ -48,24 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
   loginBtn.addEventListener('click', async () => {
     try {
       statusDiv.textContent = 'Logging in...';
-      
-      // Open Twitter auth in a new window
-      const authWindow = window.open('http://localhost:3000/auth/start', 'Twitter Login', 'width=600,height=600');
-      
-      // Listen for messages from the auth window
-      window.addEventListener('message', function(event) {
-        if (event.origin !== 'http://localhost:3000') return;
-        
-        if (event.data === 'twitter-auth-success') {
-          authWindow.close();
-          chrome.storage.local.set({ twitterAuth: true }, () => {
-            loginBtn.style.display = 'none';
-            tweetInput.disabled = false;
-            sendTweetBtn.disabled = false;
-            statusDiv.textContent = 'Logged in successfully!';
-          });
-        }
-      });
+
+      // // Open Twitter auth in a new window
+      const authWindow = window.open(`${BACKEND_URL}/auth/start`, 'Twitter Login', 'width=600,height=600');
 
     } catch (error) {
       statusDiv.textContent = 'Login failed. Please try again.';
@@ -86,6 +103,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   });
 
+  logoutBtn.addEventListener('click', async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/logout`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      enableLogInButton();
+      chrome.storage.local.set({ twitterAuth: false, userName: null }, () => {
+        statusDiv.textContent = 'Logged out successfully.';
+        setTimeout(() => {
+          statusDiv.textContent = '';
+        }, 2000);
+      });
+    } catch (error) {
+      console.error('Failed to log out:', error);
+      statusDiv.textContent = 'Failed to log out. Please try again.';
+    }
+
+  })
+
   sendTweetBtn.addEventListener('click', async () => {
     const tweetText = tweetInput.value.trim();
     if (!tweetText) {
@@ -97,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       statusDiv.textContent = 'Sending tweet...';
       sendTweetBtn.disabled = true;
 
-      const response = await fetch('http://localhost:3000/tweet', {
+      const response = await fetch(`${BACKEND_URL}/tweet`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,11 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       playFlushAnimation();
       const result = await response.json();
-      
-      setTimeout(() => {
-        statusDiv.textContent = 'Tweet sent successfully! 🚽';
-        tweetInput.value = ''; // Clear the input
-      }, 1000);
+
+      if (result.data && result.data.id) {
+        statusDiv.innerHTML = `Tweet <a href="https://x.com/i/web/status/${result.data.id}" target="_blank">posted</a> successfully!`;
+      } else {
+        throw new Error('Tweet ID not available in response. Tweet not posted.');
+      }
+
+      tweetInput.value = ''; // Clear the input
     } catch (error) {
       console.error('Failed to send tweet:', error);
       statusDiv.textContent = 'Failed to send tweet. Please try again.';
@@ -124,4 +169,4 @@ document.addEventListener('DOMContentLoaded', () => {
       sendTweetBtn.disabled = false;
     }
   });
-}); 
+});
