@@ -49,8 +49,8 @@ h1 {
 .user-profile {
   display: flex;
   align-items: center;
-  gap: 12px;
-  justify-content: center;
+  gap: 8px;
+  justify-content: flex-start;
 }
 
 .tweet-section {
@@ -194,6 +194,7 @@ button:disabled {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 #username {
