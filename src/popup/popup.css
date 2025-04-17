@@ -10,6 +10,7 @@ body {
   flex-direction: column;
   gap: 20px;
   max-width: 100%;
+  position: relative;
 }
 
 h1 {
@@ -174,4 +175,28 @@ button:disabled {
 #username {
   color: #1DA1F2;
   font-weight: 500;
+}
+
+.logout-circle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-circle:hover {
+  background-color: #fee2e2;
+  border-color: #fecaca;
+  color: #ef4444;
+  transform: scale(1.05);
 } 
