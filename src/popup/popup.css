@@ -148,17 +148,6 @@ button:disabled {
   flex: 1;
 }
 
-#testAnimationBtn {
-  background-color: #dbeafe;
-  color: #1e40af;
-  border-color: #bfdbfe;
-}
-
-#testAnimationBtn:hover {
-  background-color: #bfdbfe;
-  border-color: #93c5fd;
-}
-
 .user-info {
   text-align: center;
   margin: 10px 0;

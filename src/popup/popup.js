@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendTweetBtn = document.getElementById('sendTweetBtn');
   const tweetInput = document.getElementById('tweetInput');
   const statusDiv = document.getElementById('status');
-  const testAnimationBtn = document.getElementById('testAnimationBtn');
   const authSection = document.querySelector('.auth-section');
   const userInfo = document.querySelector('.user-info');
   const tweetSection = document.querySelector('.tweet-section');
@@ -96,19 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
       statusDiv.textContent = 'Login failed. Please try again.';
       console.error('Login error:', error);
     }
-  });
-
-  testAnimationBtn.addEventListener('click', () => {
-    const dummyText = tweetInput.value.trim();
-    if (!dummyText) {
-      statusDiv.textContent = 'Please enter some text to test the animation!';
-      return;
-    }
-    playFlushAnimation();
-    setTimeout(() => {
-      tweetInput.value = '';
-      statusDiv.textContent = 'Test flush complete! 🚽';
-    }, 1000);
   });
 
   logoutBtn.addEventListener('click', async () => {
