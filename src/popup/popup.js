@@ -30,15 +30,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loginBtn.addEventListener('click', async () => {
     try {
-      // Implement Twitter OAuth flow here
       statusDiv.textContent = 'Logging in...';
-      // After successful login, store auth token
-      chrome.storage.local.set({ twitterAuth: true }, () => {
-        loginBtn.style.display = 'none';
-        tweetInput.disabled = false;
-        sendTweetBtn.disabled = false;
-        statusDiv.textContent = 'Logged in successfully!';
+      
+      // Open Twitter auth in a new window
+      const authWindow = window.open('http://localhost:3000/auth/start', 'Twitter Login', 'width=600,height=600');
+      
+      // Listen for messages from the auth window
+      window.addEventListener('message', function(event) {
+        if (event.origin !== 'http://localhost:3000') return;
+        
+        if (event.data === 'twitter-auth-success') {
+          authWindow.close();
+          chrome.storage.local.set({ twitterAuth: true }, () => {
+            loginBtn.style.display = 'none';
+            tweetInput.disabled = false;
+            sendTweetBtn.disabled = false;
+            statusDiv.textContent = 'Logged in successfully!';
+          });
+        }
       });
+
     } catch (error) {
       statusDiv.textContent = 'Login failed. Please try again.';
       console.error('Login error:', error);
