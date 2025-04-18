@@ -3,6 +3,9 @@
   "name": "Tweet Toilet",
   "version": "1.0.0",
   "description": "A Chrome extension for managing tweets",
+  "icons": {
+    "128": "icon.png"
+  },
   "permissions": [
     "storage",
     "activeTab",
@@ -19,7 +22,8 @@
     "type": "module"
   },
   "action": {
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup/popup.html",
+    "default_icon": "icon.png"
   },
   "commands": {
     "_execute_action": {
