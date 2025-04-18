@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tweetInput.disabled = false;
     sendTweetBtn.disabled = false;
     logoutBtn.style.display = 'inline-block';
-    statusDiv.textContent = `Logged in as @${name}`;
+    document.getElementById('username').textContent = `@${name}`;
     signedOutView.style.display = 'none';
     signedInView.style.display = 'block';
   }
