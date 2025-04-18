@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const userInfo = document.querySelector('.user-info');
   const tweetSection = document.querySelector('.tweet-section');
 
-  tweetInput.focus();
-
   function playFlushAnimation() {
     // Create water swirl effect
     const waterEffect = document.createElement('div');
@@ -42,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signedOutView.style.display = 'none';
     signedInView.style.display = 'block';
     fetchAndUpdateProfilePicture();
+    tweetInput.focus();
   }
 
   async function fetchAndUpdateProfilePicture() {
