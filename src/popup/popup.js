@@ -10,16 +10,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendTweetBtn = document.getElementById('sendTweetBtn');
   const tweetInput = document.getElementById('tweetInput');
   const statusDiv = document.getElementById('status');
-  const authSection = document.querySelector('.auth-section');
+  const signedOutView = document.querySelector('.signed-out-view');
+  const signedInView = document.querySelector('.signed-in-view');
   const userInfo = document.querySelector('.user-info');
   const tweetSection = document.querySelector('.tweet-section');
 
   tweetInput.focus();
 
-  // Simulate logged in state
-  authSection.style.display = 'none';
-  userInfo.style.display = 'block';
-  tweetSection.style.display = 'block';
+  // Show signed-in view (for testing)
+  signedOutView.style.display = 'none';
+  signedInView.style.display = 'block';
 
   function playFlushAnimation() {
     // Create water swirl effect
@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     sendTweetBtn.disabled = false;
     logoutBtn.style.display = 'inline-block';
     statusDiv.textContent = `Logged in as @${name}`;
+    signedOutView.style.display = 'none';
+    signedInView.style.display = 'block';
   }
 
   function enableLogInButton() {
@@ -50,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.style.display = 'none';
     tweetInput.disabled = true;
     sendTweetBtn.disabled = true;
+    signedOutView.style.display = 'block';
+    signedInView.style.display = 'none';
   }
 
   chrome.storage.local.get(['twitterAuth', 'userName'], async (r) => {
