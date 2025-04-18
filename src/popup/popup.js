@@ -17,10 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   tweetInput.focus();
 
-  // Show signed-in view (for testing)
-  signedOutView.style.display = 'none';
-  signedInView.style.display = 'block';
-
   function playFlushAnimation() {
     // Create water swirl effect
     const waterEffect = document.createElement('div');
