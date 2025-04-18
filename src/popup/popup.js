@@ -41,6 +41,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('username').textContent = `@${name}`;
     signedOutView.style.display = 'none';
     signedInView.style.display = 'block';
+    fetchAndUpdateProfilePicture();
+  }
+
+  async function fetchAndUpdateProfilePicture() {
+    try {
+      // First check if we have a cached profile picture URL
+      const { profilePictureUrl } = await new Promise(resolve => {
+        chrome.storage.local.get(['profilePictureUrl'], resolve);
+      });
+
+      if (profilePictureUrl) {
+        document.getElementById('profilePicture').src = profilePictureUrl;
+        return;
+      }
+
+      const response = await fetch(`${BACKEND_URL}/user-profile`, {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) throw new Error('Failed to fetch profile');
+      
+      const userData = await response.json();
+      if (userData.profile_image_url) {
+        const profilePicUrl = userData.profile_image_url;
+        document.getElementById('profilePicture').src = profilePicUrl;
+        // Cache the profile picture URL
+        chrome.storage.local.set({ profilePictureUrl: profilePicUrl });
+      }
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+    }
   }
 
   function enableLogInButton() {
@@ -109,7 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       enableLogInButton();
-      chrome.storage.local.set({ twitterAuth: false, userName: null }, () => {
+      chrome.storage.local.set({ 
+        twitterAuth: false, 
+        userName: null,
+        profilePictureUrl: null 
+      }, () => {
         statusDiv.textContent = 'Logged out successfully.';
         setTimeout(() => {
           statusDiv.textContent = '';
