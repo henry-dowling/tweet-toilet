@@ -1,4 +1,5 @@
-const BACKEND_URL = 'http://localhost:3000';
+// const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'https://api.tweettoilet.com';
 
 
 
@@ -12,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusDiv = document.getElementById('status');
   const signedOutView = document.querySelector('.signed-out-view');
   const signedInView = document.querySelector('.signed-in-view');
-  const userInfo = document.querySelector('.user-info');
-  const tweetSection = document.querySelector('.tweet-section');
 
   function playFlushAnimation() {
     // Create water swirl effect
@@ -31,16 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
-  function disableLogInButton(name) {
-    loginBtn.style.display = 'none';
-    tweetInput.disabled = false;
-    sendTweetBtn.disabled = false;
-    logoutBtn.style.display = 'inline-block';
+  function showMainPage(name) {
     document.getElementById('username').textContent = `@${name}`;
     signedOutView.style.display = 'none';
     signedInView.style.display = 'block';
     fetchAndUpdateProfilePicture();
     tweetInput.focus();
+  }
+
+  function showSignInPage() {
+    signedOutView.style.display = 'flex';
+    signedInView.style.display = 'none';
   }
 
   async function fetchAndUpdateProfilePicture() {
@@ -73,19 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function enableLogInButton() {
-    loginBtn.style.display = 'inline-block';
-    logoutBtn.style.display = 'none';
-    tweetInput.disabled = true;
-    sendTweetBtn.disabled = true;
-    signedOutView.style.display = 'block';
-    signedInView.style.display = 'none';
-  }
-
   chrome.storage.local.get(['twitterAuth', 'userName'], async (r) => {
-    if (r.twitterAuth && r.userName) return disableLogInButton(r.userName);
+    if (r.twitterAuth && r.userName) {
+      return showMainPage(r.userName)
+    };
 
     try {
+      console.log('checking if the error is logged in.');
       const resp = await fetch(`${BACKEND_URL}/is-user-logged-in`, {
         credentials: 'include',
       });
@@ -93,11 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const { userName } = await resp.json();
       chrome.storage.local.set({ twitterAuth: true, userName }, () => {
-        disableLogInButton(userName);
+        showMainPage(userName);
       });
-    } catch {
-      statusDiv.textContent = 'Not logged in';
-      loginBtn.style.display = 'inline-block';
+    } catch (error) {
+      console.log('error while signing the user: ', error);
+      showSignInPage();
     }
   });
 
@@ -138,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      enableLogInButton();
+      showSignInPage();
       chrome.storage.local.set({ 
         twitterAuth: false, 
         userName: null,

@@ -2,28 +2,22 @@
   "manifest_version": 3,
   "name": "Tweet Toilet",
   "version": "1.0.0",
-  "description": "A Chrome extension for managing tweets",
+  "description": "A Chrome extension for tweeting directly from the browser.",
   "icons": {
-    "128": "icon.png"
+    "128": "assets/icon.png"
   },
   "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
+    "storage"
   ],
   "host_permissions": [
-    "https://api.twitter.com/*",
     "http://localhost:3000/*",
+    "https://api.tweettoilet.com/*",
     "https://fonts.googleapis.com/*",
     "https://fonts.gstatic.com/*"
   ],
-  "background": {
-    "service_worker": "background/background.js",
-    "type": "module"
-  },
   "action": {
     "default_popup": "popup/popup.html",
-    "default_icon": "icon.png"
+    "default_icon": "assets/icon.png"
   },
   "commands": {
     "_execute_action": {
