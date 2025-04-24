@@ -2,16 +2,17 @@
 <html>
 <head>
   <title>Tweet Toilet</title>
-  <link rel="stylesheet" href="../fonts/geist.css">
+  <link rel="stylesheet" href="../assets/geist.css">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="container">
     <div class="signed-out-view">
-      <h1>Tweet Toilet</h1>
+      <img id="tweet-toilet-logo-img" src="../assets/icon.png">
+      <h1 class="pixelated">Tweet Toilet</h1>
       <button id="loginBtn" class="primary-button">Login with Twitter</button>
     </div>
-    
+
     <div class="signed-in-view" style="display: none;">
       <div class="header">
         <button id="logoutBtn" class="logout-circle" title="Logout">
@@ -21,11 +22,11 @@
             <line x1="21" y1="12" x2="9" y2="12"></line>
           </svg>
         </button>
-        <h1>Tweet Toilet</h1>
+        <h1 class="pixelated">Tweet Toilet</h1>
       </div>
       <div class="user-info">
         <div class="user-profile">
-          <img id="profilePicture" src="/icon.png" alt="Profile Picture">
+          <img id="profilePicture" src="../assets/icon.png" alt="Profile Picture">
           <span>Signed in as <span id="username"></span></span>
         </div>
       </div>
