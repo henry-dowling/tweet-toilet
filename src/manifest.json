@@ -23,7 +23,7 @@
     "_execute_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+S",
-        "mac": "Ctrl+Shift+S"
+        "mac": "Command+Shift+S"
       },
       "description": "Open Tweet Toilet"
     }

@@ -9,10 +9,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginBtn = document.getElementById('loginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
   const sendTweetBtn = document.getElementById('sendTweetBtn');
+  const addToThreadBtn = document.getElementById('addToThreadBtn');
+  const threadContainer = document.getElementById('thread-container');
   const tweetInput = document.getElementById('tweetInput');
   const statusDiv = document.getElementById('status');
   const signedOutView = document.querySelector('.signed-out-view');
   const signedInView = document.querySelector('.signed-in-view');
+
+  let isThread = false;
+
+  function createTweetInput() {
+    const container = document.createElement('div');
+    container.className = 'thread-tweet-container';
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'thread-tweet';
+    textarea.placeholder = 'Continue your thread...';
+    addThreadTweetKeyboardHandler(textarea);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-tweet-btn';
+    removeBtn.title = 'Remove from thread';
+    removeBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>`;
+    removeBtn.onclick = () => {
+      container.remove();
+      if (threadContainer.querySelectorAll('.thread-tweet').length === 1) {
+        isThread = false;
+      }
+    };
+
+    container.appendChild(textarea);
+    container.appendChild(removeBtn);
+    return container;
+  }
+
+  addToThreadBtn.addEventListener('click', () => {
+    isThread = true;
+    const newContainer = createTweetInput();
+    threadContainer.appendChild(newContainer);
+    // Focus the new textarea
+    const newTextarea = newContainer.querySelector('textarea');
+    newTextarea.focus();
+  });
 
   function playFlushAnimation() {
     // Create water swirl effect
@@ -98,15 +139,44 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle Enter and Shift+Enter key presses
   tweetInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      if (e.shiftKey) {
-        // Allow default behavior (newline) when Shift+Enter is pressed
+      // Command/Control + Enter to add to thread
+      if ((e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        addToThreadBtn.click();
         return;
       }
-      // Prevent default behavior and submit tweet when Enter is pressed
+      // Shift+Enter for newline
+      if (e.shiftKey) {
+        return;
+      }
+      // Enter to send
       e.preventDefault();
       sendTweetBtn.click();
     }
   });
+
+  // Add keyboard event handler for thread tweets
+  function addThreadTweetKeyboardHandler(textarea) {
+    textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        // Command/Control + Enter to add to thread
+        if ((e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          const currentPosition = Array.from(threadContainer.querySelectorAll('textarea')).indexOf(textarea);
+          addToThreadBtn.click();
+          // Focus will be handled by the addToThreadBtn click handler
+          return;
+        }
+        // Shift+Enter for newline
+        if (e.shiftKey) {
+          return;
+        }
+        // Enter to send
+        e.preventDefault();
+        sendTweetBtn.click();
+      }
+    });
+  }
 
   loginBtn.addEventListener('click', async () => {
     try {
@@ -151,23 +221,31 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   sendTweetBtn.addEventListener('click', async () => {
-    const tweetText = tweetInput.value.trim();
-    if (!tweetText) {
+    const tweetInputs = threadContainer.querySelectorAll('.thread-tweet');
+    const tweets = Array.from(tweetInputs)
+      .map(input => input.value.trim())
+      .filter(text => text.length > 0);
+
+    if (tweets.length === 0) {
       statusDiv.textContent = 'Please enter a tweet.';
       return;
     }
 
     try {
-      statusDiv.textContent = 'Sending tweet...';
+      statusDiv.textContent = isThread ? 'Sending thread...' : 'Sending tweet...';
       sendTweetBtn.disabled = true;
+      addToThreadBtn.disabled = true;
 
-      const response = await fetch(`${BACKEND_URL}/tweet`, {
+      const endpoint = isThread ? '/thread' : '/tweet';
+      const body = isThread ? { tweets } : { text: tweets[0] };
+
+      const response = await fetch(`${BACKEND_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: tweetText }),
-        credentials: 'include', // Important: This ensures cookies are sent with the request
+        body: JSON.stringify(body),
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -177,18 +255,28 @@ document.addEventListener('DOMContentLoaded', () => {
       playFlushAnimation();
       const result = await response.json();
 
-      if (result.data && result.data.id) {
+      if (isThread && result.thread) {
+        const lastTweetId = result.thread[result.thread.length - 1].id_str;
+        statusDiv.innerHTML = `Thread <a href="https://x.com/i/web/status/${lastTweetId}" target="_blank">posted</a> successfully!`;
+      } else if (result.data && result.data.id) {
         statusDiv.innerHTML = `Tweet <a href="https://x.com/i/web/status/${result.data.id}" target="_blank">posted</a> successfully!`;
       } else {
         throw new Error('Tweet ID not available in response. Tweet not posted.');
       }
 
-      tweetInput.value = ''; // Clear the input
+      // Clear all tweet inputs
+      while (threadContainer.children.length > 1) {
+        threadContainer.removeChild(threadContainer.lastChild);
+      }
+      tweetInput.value = '';
+      isThread = false;
+
     } catch (error) {
       console.error('Failed to send tweet:', error);
-      statusDiv.textContent = 'Failed to send tweet. Please try again.';
+      statusDiv.textContent = isThread ? 'Failed to send thread. Please try again.' : 'Failed to send tweet. Please try again.';
     } finally {
       sendTweetBtn.disabled = false;
+      addToThreadBtn.disabled = false;
     }
   });
 });

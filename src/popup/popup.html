@@ -31,9 +31,12 @@
         </div>
       </div>
       <div class="tweet-section">
-        <textarea id="tweetInput" placeholder="Enter your tweet..."></textarea>
-        <div class="keyboard-shortcuts">Enter to send tweet // Shift + Enter for newline</div>
+        <div id="thread-container">
+          <textarea id="tweetInput" placeholder="Enter your tweet..." class="thread-tweet"></textarea>
+        </div>
+        <div class="keyboard-shortcuts">Enter to send // Shift + Enter for newline // ⌘ + Enter to add to thread</div>
         <div class="buttons-container">
+          <button id="addToThreadBtn" class="secondary-button">+ Add to Thread</button>
           <button id="sendTweetBtn">Send Tweet</button>
         </div>
       </div>
