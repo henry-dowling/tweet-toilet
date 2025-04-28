@@ -24,4 +24,5 @@ build/
 
 # Chrome Extension specific
 *.pem
-*.crx 
+*.crx
+.DS_Store

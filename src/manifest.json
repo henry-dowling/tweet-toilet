@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Tweet Toilet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Chrome extension for tweeting directly from the browser.",
   "icons": {
     "128": "assets/icon.png"
