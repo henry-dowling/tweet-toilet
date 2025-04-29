@@ -4,6 +4,7 @@
   <title>Tweet Toilet</title>
   <link rel="stylesheet" href="../assets/geist.css">
   <link rel="stylesheet" href="popup.css">
+  <meta charset="UTF-8">
 </head>
 <body>
   <div class="container">
@@ -31,8 +32,14 @@
         </div>
       </div>
       <div class="tweet-section">
-        <textarea id="tweetInput" placeholder="Enter your tweet..."></textarea>
-        <div class="keyboard-shortcuts">Enter to send tweet // Shift + Enter for newline</div>
+        <div id="tweet-input-div">
+          <textarea id="tweetInput" placeholder="Enter your tweet..."></textarea>
+          <div class="keyboard-shortcuts">Shift + Enter for newline</div>
+        </div>
+        <div class="checkbox-container">
+          <input type="checkbox" id="toiletTagCheckbox">
+          <label class="checkbox-label" for="toiletTagCheckbox">Sent via toilet</label>
+        </div>
         <div class="buttons-container">
           <button id="sendTweetBtn">Send Tweet</button>
         </div>

@@ -1,6 +1,6 @@
 // const BACKEND_URL = 'http://localhost:3000';
 const BACKEND_URL = 'https://api.tweettoilet.com';
-
+const TWEET_TOILET_PROFILE = '@tweetttoilet';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusDiv = document.getElementById('status');
   const signedOutView = document.querySelector('.signed-out-view');
   const signedInView = document.querySelector('.signed-in-view');
+  const sentViaToiletCheckbox = document.getElementById('toiletTagCheckbox');
 
   function playFlushAnimation() {
     // Create water swirl effect
@@ -157,8 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    try {
-      statusDiv.textContent = 'Sending tweet...';
+    // apend Sent via toilet
+    if (sentViaToiletCheckbox.checked) {
+      tweetText += `\n\nsent via ${TWEET_TOILET_PROFILE}`;
+    }
+
       sendTweetBtn.disabled = true;
 
       const response = await fetch(`${BACKEND_URL}/tweet`, {
@@ -170,20 +174,23 @@ document.addEventListener('DOMContentLoaded', () => {
         credentials: 'include', // Important: This ensures cookies are sent with the request
       });
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        showSignInPage();
+      }
+      else if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      else {
+        playFlushAnimation();
+        const result = await response.json();
 
-      playFlushAnimation();
-      const result = await response.json();
-
-      if (result.data && result.data.id) {
-        statusDiv.innerHTML = `Tweet <a href="https://x.com/i/web/status/${result.data.id}" target="_blank">posted</a> successfully!`;
-      } else {
-        throw new Error('Tweet ID not available in response. Tweet not posted.');
+        if (result.data && result.data.id) {
+          statusDiv.innerHTML = `Tweet <a href="https://x.com/i/web/status/${result.data.id}" target="_blank">posted</a> successfully!`;
+          tweetInput.value = ''; // Clear the input
+        } else {
+          throw new Error('Tweet ID not available in response. Tweet not posted.');
+        }
       }
-
-      tweetInput.value = ''; // Clear the input
     } catch (error) {
       console.error('Failed to send tweet:', error);
       statusDiv.textContent = 'Failed to send tweet. Please try again.';
